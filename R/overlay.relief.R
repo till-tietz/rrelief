@@ -3,7 +3,7 @@
 #' This function converts DEM data into a data frame of spatial points and their associated
 #' hill shade values. It merges this data with atributes associated with sf geometries. This allows
 #' you to visualize sf attributes on top of a shaded relief in ggplot without masking the relief.
-#' To implement ths in ggplot plot the function output as a geom_raster() with x and y as point coordinates.
+#' To implement this in ggplot plot the function output as a geom_raster() with x and y as point coordinates.
 #' Control the hill shading with an alpha scale and the sf attribute visualization with a fill scale.
 #'
 #'
