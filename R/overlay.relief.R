@@ -24,6 +24,7 @@ overlay.relief <- function(map.data,
                            altitude = 45,
                            azimuth = 270,
                            z.factor = NULL){
+  future::plan(multiprocess)
   if(missing(map.data)){stop("missing map.data")
   } else {
     if(class(map.data)[[1]] != "sf"){stop("map.data not of class sf")
@@ -58,7 +59,7 @@ overlay.relief <- function(map.data,
     relief_cropped[variable] <- rep(crop_area[,variable], nrow(relief_cropped))
     return(relief_cropped)
   }
-  relief_combined <- purrr::map(1:nrow(map.data), ~relief_assign(.x))
+  relief_combined <- furrr::future_map(1:nrow(map.data), ~relief_assign(.x))
   relief_out <- dplyr::bind_rows(relief_combined, .id = "column_label")%>%
     dplyr::select(-c(column_label))
   return(relief_out)
