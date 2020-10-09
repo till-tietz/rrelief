@@ -58,7 +58,7 @@ overlay.relief <- function(map.data,
     relief_cropped[variable] <- rep(crop_area[,variable], nrow(relief_cropped))
     return(relief_cropped)
   }
-  relief_combined <- purrr::future(1:nrow(map.data), ~relief_assign(.x), .progress = TRUE)
+  relief_combined <- purrr::future(1:nrow(map.data), ~relief_assign(.x))
   relief_out <- dplyr::bind_rows(relief_combined, .id = "column_label")%>%
     dplyr::select(-c(column_label))
   return(relief_out)
