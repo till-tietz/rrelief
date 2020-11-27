@@ -49,9 +49,9 @@ overlay.relief <- function(map.data,
   relief <- raster::hillShade(slope, aspect, angle= altitude, direction= azimuth)
 
   relief_assign <- function(x){
-    crop_area <- map_data %>% dplyr::slice(.,x)
-    relief_cropped <- raster::crop(relief, as(crop_area, 'Spatial'))%>%
-      raster::mask(., as(crop_area, 'Spatial'))%>%
+    crop_area <- map_data[x,]
+    relief_cropped <- raster::crop(relief, extent(crop_area))%>%
+      raster::mask(., crop_area)%>%
       raster::rasterToPoints()%>%
       data.frame()
     sf::st_geometry(crop_area) <- NULL
