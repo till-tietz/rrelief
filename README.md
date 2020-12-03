@@ -107,4 +107,4 @@ ggsave('map_rrelief.png', width = 15, height = 10)
 
 And there we are.
 
-![](C:/Users/ttiet/Desktop/R_packages/rrelief/map.png)
+![](map.png)
