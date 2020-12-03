@@ -34,10 +34,10 @@ overlay.relief <- function(map.data,
     }
   }
 
-  if(missing(variable)) {
+  if(missing(variables)) {
     stop("Missing variable. Please specify the name of the variable in map.data you'd like to visualize")
   } else {
-    if (class(variable) != "character") {
+    if (class(variables) != "character") {
       stop("Input for Variable is not of class character. Please input variable as character string")
     }
   }
