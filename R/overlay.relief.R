@@ -68,7 +68,7 @@ overlay.relief <- function(map.data,
     crop_area <- map_data[x,]
 
     relief_cropped <- raster::crop(relief, extent(crop_area))%>%
-      raster::mask(., crop_area)%>%
+      raster::mask(., extent(crop_area))%>%
       raster::rasterToPoints()%>%
       data.frame()
 
