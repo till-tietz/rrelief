@@ -10,7 +10,11 @@
 rrelief allows you to conveniently build visually appealing and
 informative maps with ggplot. Using this package you can now easily
 visualize data over a shaded relief background without masking the
-relief.
+relief. This package heavily relies on the amazing raster
+(<http://CRAN.R-project.org/package=raster>) and sf
+(<https://CRAN.R-project.org/package=sf>) packages and simply provides a
+convenient wrapper to integrate your normal workflow to accomplish this
+task using these packages into one function.
 
 ## Installation
 

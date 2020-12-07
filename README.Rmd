@@ -21,6 +21,9 @@ knitr::opts_chunk$set(
 rrelief allows you to conveniently build visually appealing and informative maps with ggplot.
 Using this package you can now easily visualize data over a shaded relief background without 
 masking the relief.
+This package heavily relies on the amazing raster (http://CRAN.R-project.org/package=raster) and
+sf (https://CRAN.R-project.org/package=sf) packages and simply provides a convenient wrapper 
+to integrate your normal workflow to accomplish this task using these packages into one function.
 
 ## Installation
 
@@ -69,7 +72,6 @@ rrelief_output <- overlay.relief(map.data = census_tracts, variables = c("random
 overlay.relief returns a data.frame of points (defined by x and y coordinates) with their respective hill-shade (layer) and variable values. 
 
 ```{r echo = FALSE, results = "asis"}
-library(knitr)
 rrelief_output <- readRDS("C:/Users/ttiet/Desktop/rrelief_data/rrelief_test_out.rds")
 knitr::kable(rrelief_output[c(1:10),c(1:5)])
 ```
