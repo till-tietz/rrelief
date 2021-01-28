@@ -8,7 +8,7 @@
 #'
 #'
 #' @param map.data An sf data frame with geometries of type MULTILINESTRING, POLYGON or MULTIPOLYGON and associated attributes.
-#' @param variable The column names of the attributes you wish to visualize on top of the relief passed to the argument as a character vector i.e c("variable_1","variable_2").
+#' @param variables The column names of the attributes you wish to visualize on top of the relief passed to the argument as a character vector i.e c("variable_1","variable_2").
 #' @param elevation.raster Digital Elevation Model data in form of an object of class RasterLayer.
 #' @param coordinate.system Four digit epsg code of the projection you wish to use. Default 4326.
 #' @param altitude Elevation angle of light source in degrees to calculate hill shade. Numeric value between 0 and 90.

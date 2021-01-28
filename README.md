@@ -42,6 +42,7 @@ polygon with sf::st\_union() to cut down the run-time of overlay.relief)
 
 ``` r
 library(rrelief)
+library(ggplot2)
 
 #loading .tif elevation files as raster files and merging them into one raster 
 files <- list.files(recursive=TRUE, pattern=".tif$")
@@ -88,6 +89,7 @@ it is important to set the alpha value of your fill scale to the central
 value of your hill-shade alpha scale with guides.
 
 ``` r
+
 ggplot()+
   geom_raster(data = rrelief_output, aes(x = round(x,5), y = round(y,5), alpha = layer, fill = random_var_cont),interpolate = TRUE)+
   scale_alpha(name = "", range = c(1, 0.4), guide = F)+

@@ -1,5 +1,5 @@
 Package: rrelief
-Title: Visualize Data Associated with Simple Feature Geometries over a Shaded Relief Background. 
+Title: Visualize Data Associated with Simple Feature Geometries over a Shaded Relief Background
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Till",
@@ -7,12 +7,13 @@ Authors@R:
            role = c("aut", "cre"),
            email = "ttietz2014@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: 
-License: CC0
+Description: rrelief allows you to conveniently build visually appealing and informative maps with ggplot. Using this package you can now easily visualize data over a shaded relief background without masking the relief.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
         tidyverse,
         raster,
-        sf
-RoxygenNote: 6.1.1
+        sf,
+        purrr
+RoxygenNote: 7.1.1

@@ -4,27 +4,33 @@
 \alias{overlay.relief}
 \title{overlay relief with coloured data visualization}
 \usage{
-overlay.relief(map.data, variable, elevation.raster,
-  coordinate.system = 4326, altitude = 45, azimuth = 270,
-  z.factor = NULL)
+overlay.relief(
+  map.data,
+  variables,
+  elevation.raster,
+  coordinate.system = 4326,
+  altitude = 45,
+  azimuth = 270,
+  z.factor = NULL
+)
 }
 \arguments{
 \item{map.data}{An sf data frame with geometries of type MULTILINESTRING, POLYGON or MULTIPOLYGON and associated attributes.}
 
-\item{variable}{The column name of the attribute you wish to visualize on top of the relief passed to the argument as a character string i.e "variable".}
+\item{variables}{The column names of the attributes you wish to visualize on top of the relief passed to the argument as a character vector i.e c("variable_1","variable_2").}
 
 \item{elevation.raster}{Digital Elevation Model data in form of an object of class RasterLayer.}
 
-\item{coordinate.system}{Four digit epsg code of the projection you wish to use. Defaults to 4326.}
+\item{coordinate.system}{Four digit epsg code of the projection you wish to use. Default 4326.}
 
 \item{altitude}{Elevation angle of light source in degrees to calculate hill shade. Numeric value between 0 and 90.}
 
 \item{azimuth}{Direction angle of light source in degrees to calculate hill shade. Numeric value between 0 and 360.}
 
-\item{z.factor}{Numeric value to multiply elevation raster by to exaggerate relief. Defaults to NULL.}
+\item{z.factor}{Numeric value to multiply elevation raster by to exaggerate relief. Default NULL.}
 }
 \value{
-A data.frame of points and their associated hill shade values and sf attributes.
+A data frame of points and their associated hill shade values and sf attributes.
 }
 \description{
 This function converts DEM data into a data frame of spatial points and their associated
