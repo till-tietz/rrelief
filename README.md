@@ -113,4 +113,4 @@ ggsave('map_rrelief.png', width = 15, height = 10)
 
 And there we are.
 
-![](map.png)
+![](man/figures/map.png)
