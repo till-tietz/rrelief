@@ -37,10 +37,6 @@ for the state of Washington from
 as well as some elevation data for the north western United States from
 (<http://srtm.csi.cgiar.org/srtmdata/>).
 
-(If it is clear from looking at your map.data sf that many observations
-have the same variable values you might wish to merge them into one
-polygon with sf::st\_union() to cut down the run-time of overlay.relief)
-
 ``` r
 library(rrelief)
 
@@ -61,15 +57,14 @@ raster <- raster::crop(raster, census_tracts)
 census_tracts[,"random_var_cont"] <- sample(seq(from = 0, to = 100, by = 0.01), size = nrow(census_tracts), replace = TRUE)
 census_tracts[,"random_var_cat"] <- sample(c(0,1, NA), size = nrow(census_tracts), replace = TRUE)
 
-#running rrelief keeping the crs projection at 
+#running rrelief keeping the crs projection at 4326
 rrelief_output <- overlay.relief(map.data = census_tracts, variables = c("random_var_cont", "random_var_cat"),
                                  elevation.raster = raster, make.hillshade = TRUE, 
                                  coordinate.system = NULL, altitude = 45, azimuth = 270, z.factor = 10)
 ```
 
-overlay.relief returns a data.frame of points (defined by x and y
-coordinates) with their respective hill-shade (layer) and variable
-values.
+overlay.relief returns a data.frame of points with their respective
+hill-shade and variable values.
 
 |     value |          x |        y | coverage\_fraction | random\_var\_cont |
 | --------: | ---------: | -------: | -----------------: | ----------------: |
