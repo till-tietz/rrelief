@@ -1,89 +1,118 @@
 #' overlay relief with coloured data visualization
 #'
-#' This function converts DEM data into a data frame of spatial points and their associated
-#' hill shade values. It merges this data with atributes associated with sf geometries. This allows
+#' overlay.relief converts DEM data into a data frame of spatial points and their associated
+#' hill shade values. It merges this data with attributes associated with sf geometries. This allows
 #' you to visualize sf attributes on top of a shaded relief in ggplot without masking the relief.
-#' To implement this in ggplot plot the function output as a geom_raster() with x and y as point coordinates.
-#' Control the hill shading with an alpha scale and the sf attribute visualization with a fill scale.
 #'
+#' @name overlay.relief
 #'
-#' @param map.data An sf data frame with geometries of type MULTILINESTRING, POLYGON or MULTIPOLYGON and associated attributes.
-#' @param variables The column names of the attributes you wish to visualize on top of the relief passed to the argument as a character vector i.e c("variable_1","variable_2").
-#' @param elevation.raster Digital Elevation Model data in form of an object of class RasterLayer.
-#' @param coordinate.system Four digit epsg code of the projection you wish to use. Default 4326.
+#' @param map.data An sf data frame with geometries of type POLYGON or MULTIPOLYGON and associated attributes.
+#' @param variables The column names of the attributes you wish to visualize as a character vector i.e c("variable_1","variable_2").
+#' @param elevation.raster Digital Elevation Model (if make.hillshade = TRUE) or Shaded Relief (if make.hollshade = FALSE) data of class RasterLayer.
+#' @param make.hillshade Set to TRUE if you wish to turn DEM data into hillshade, set to FALSE if you wish to pass a hillshade raster to the function directly. Default TRUE.
+#' @param coordinate.system EPSG code of the projection you wish to use. Default NULL: if crs of map.data and elevation.raster do not match the latter will be projected to the crs of the former.
 #' @param altitude Elevation angle of light source in degrees to calculate hill shade. Numeric value between 0 and 90.
 #' @param azimuth Direction angle of light source in degrees to calculate hill shade. Numeric value between 0 and 360.
 #' @param z.factor Numeric value to multiply elevation raster by to exaggerate relief. Default NULL.
 #' @return A data frame of points and their associated hill shade values and sf attributes.
 #' @export
 
+
 overlay.relief <- function(map.data,
                            variables,
                            elevation.raster,
-                           coordinate.system = 4326,
+                           make.hillshade = TRUE,
+                           coordinate.system = NULL,
                            altitude = 45,
                            azimuth = 270,
                            z.factor = NULL) {
+
   if (missing(map.data)) {
     stop("missing map.data")
   } else {
     if (class(map.data)[[1]] != "sf") {
       stop("map.data not of class sf")
-    } else {
-      map_data <- sf::st_transform(map.data, coordinate.system)
     }
   }
 
   if (missing(variables)) {
-    stop(
-      "Missing variable. Please specify the name of the variable in map.data you'd like to visualize"
-    )
+    stop("Missing variables. Please specify the names of the variables in map.data you'd like to visualize")
   } else {
     if (class(variables) != "character") {
-      stop(
-        "Input for Variable is not of class character. Please input variable as character string"
-      )
+      stop("Input for Variable is not of class character. Please input variable as character string")
+    }
+
+    if (!all(variables %in% colnames(map.data))){
+      in_colnames <- variables %in% colnames(map.data)
+      not_in_colnames <- paste(variables[which(!in_colnames)], collapse = " ")
+      stop(paste(not_in_colnames), " not in map.data", collapse = " ")
     }
   }
-
 
   if (missing(elevation.raster)) {
     stop("missing elevation.raster")
   } else {
     if (class(elevation.raster)[[1]] != "RasterLayer") {
       stop("elevation.raster not of class RasterLayer")
-    } else {
-      elevation_raster <-
-        raster::projectRaster(elevation.raster, crs = raster::crs(map_data))
     }
   }
 
-  if (!is.null(z.factor)) {
-    raster <- (elevation_raster * z.factor)
+  if(is.na(raster::crs(elevation.raster))){
+    stop("no crs set for elevation.raster")
+  }
+
+  if (is.null(coordinate.system)){
+    same_crs <- raster::compareCRS(map.data, elevation.raster)
+    if(!same_crs){
+      print("re-projecting elevation.raster")
+      elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
+      print("elevation.raster projected")
+    }
   } else {
-    raster <- elevation_raster
+    print("re-projecting map.data")
+    map.data <- sf::st_transform(map.data, crs = coordinate.system)
+    print("map.data projected")
+    print("re-projecting elevation.raster")
+    elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
+    print("elevation.raster projected")
   }
 
-  slope <- raster::terrain(raster, opt = "slope")
-  aspect <- raster::terrain(raster, opt = "aspect")
-  relief <- raster::hillShade(slope, aspect, angle = altitude, direction = azimuth)
-
-  relief_assign <- function(x) {
-    crop_area <- map_data[x, ]
-
-    relief_cropped <-
-      data.frame(raster::rasterToPoints(raster::mask(
-        raster::crop(relief, crop_area), crop_area
-      )))
-
-    sf::st_geometry(crop_area) <- NULL
-    vars <- as.data.frame(sapply(crop_area[, variables], function(x)
-        rep(x, nrow(relief_cropped))))
-    relief_cropped <- cbind(vars, relief_cropped)
-    return(relief_cropped)
+  if(make.hillshade){
+    if (!is.null(z.factor)) {
+      elevation.raster <- (elevation.raster * z.factor)
+    }
+    print("generating shaded relief")
+    slope <- raster::terrain(elevation.raster, opt = "slope")
+    aspect <- raster::terrain(elevation.raster, opt = "aspect")
+    elevation.raster <- raster::hillShade(slope, aspect, angle = altitude, direction = azimuth)
+    print("shaded relief generated")
   }
-  relief_combined <- purrr::map_dfr(1:nrow(map.data), ~ relief_assign(.x))
-  return(relief_combined)
+
+  data <- map.data
+  sf::st_geometry(data) <- NULL
+
+  print("extracting relief data for each polygon")
+  relief_vals <- exactextractr::exact_extract(elevation.raster, map.data, include_xy = TRUE)
+  print("relief data extracted")
+
+  combine_data <- function(data, relief_vals){
+    loop <- function(x){
+      value_i <- relief_vals[[x]]
+
+      data_i <- as.data.frame(data[x,variables])
+      vars_i <- dplyr::slice(data_i,rep(1:n(), each = nrow(value_i)))
+      colnames(vars_i) <- variables
+
+      value_i <- cbind(value_i, vars_i)
+      return(value_i)
+    }
+    out <- purrr::map_dfr(1:length(relief_vals), ~loop(.x))
+    return(out)
+  }
+
+  print("compiling data")
+  out <- combine_data(data = data, relief_vals = relief_vals)
+  return(out)
 }
 
 

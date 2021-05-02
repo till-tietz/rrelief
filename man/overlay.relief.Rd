@@ -8,20 +8,23 @@ overlay.relief(
   map.data,
   variables,
   elevation.raster,
-  coordinate.system = 4326,
+  make.hillshade = TRUE,
+  coordinate.system = NULL,
   altitude = 45,
   azimuth = 270,
   z.factor = NULL
 )
 }
 \arguments{
-\item{map.data}{An sf data frame with geometries of type MULTILINESTRING, POLYGON or MULTIPOLYGON and associated attributes.}
+\item{map.data}{An sf data frame with geometries of type POLYGON or MULTIPOLYGON and associated attributes.}
 
-\item{variables}{The column names of the attributes you wish to visualize on top of the relief passed to the argument as a character vector i.e c("variable_1","variable_2").}
+\item{variables}{The column names of the attributes you wish to visualize as a character vector i.e c("variable_1","variable_2").}
 
-\item{elevation.raster}{Digital Elevation Model data in form of an object of class RasterLayer.}
+\item{elevation.raster}{Digital Elevation Model (if make.hillshade = TRUE) or Shaded Relief (if make.hollshade = FALSE) data of class RasterLayer.}
 
-\item{coordinate.system}{Four digit epsg code of the projection you wish to use. Default 4326.}
+\item{make.hillshade}{Set to TRUE if you wish to turn DEM data into hillshade, set to FALSE if you wish to pass a hillshade raster to the function directly. Default TRUE.}
+
+\item{coordinate.system}{EPSG code of the projection you wish to use. Default NULL: if crs of map.data and elevation.raster do not match the latter will be projected to the crs of the former.}
 
 \item{altitude}{Elevation angle of light source in degrees to calculate hill shade. Numeric value between 0 and 90.}
 
@@ -33,9 +36,7 @@ overlay.relief(
 A data frame of points and their associated hill shade values and sf attributes.
 }
 \description{
-This function converts DEM data into a data frame of spatial points and their associated
-hill shade values. It merges this data with atributes associated with sf geometries. This allows
+overlay.relief converts DEM data into a data frame of spatial points and their associated
+hill shade values. It merges this data with attributes associated with sf geometries. This allows
 you to visualize sf attributes on top of a shaded relief in ggplot without masking the relief.
-To implement this in ggplot plot the function output as a geom_raster() with x and y as point coordinates.
-Control the hill shading with an alpha scale and the sf attribute visualization with a fill scale.
 }
