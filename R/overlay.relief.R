@@ -100,7 +100,7 @@ overlay.relief <- function(map.data,
       value_i <- relief_vals[[x]]
 
       data_i <- as.data.frame(data[x,variables])
-      vars_i <- dplyr::slice(data_i,rep(1:n(), each = nrow(value_i)))
+      vars_i <- dplyr::slice(data_i,rep(1:dplyr::n(), each = nrow(value_i)))
       colnames(vars_i) <- variables
 
       value_i <- cbind(value_i, vars_i)
