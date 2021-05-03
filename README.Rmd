@@ -73,7 +73,7 @@ overlay.relief returns a data.frame of points with their respective hill-shade a
 
 ```{r echo = FALSE, results = "asis"}
 rrelief_output <- readRDS("C:/Users/ttiet/Desktop/rrelief_data/rrelief_test_out.rds")
-knitr::kable(rrelief_output[c(1:10),c(1:5)])
+knitr::kable(rrelief_output[c(1:10),])
 ```
 
 Now you can simply create your base map with generate.map.
