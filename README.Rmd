@@ -23,7 +23,7 @@ Using this package you can now easily visualize data over a shaded relief backgr
 masking the relief.
 This package heavily relies on the amazing raster (http://CRAN.R-project.org/package=raster),
 sf (https://CRAN.R-project.org/package=sf) and 
-exactextractr (https://CRAN.R-project.org/package=exactextractr) packages and simply provides a convenient wrapper to integrate your normal workflow to accomplish this task using these packages into one function.
+exactextractr (https://CRAN.R-project.org/package=exactextractr) packages and simply provides some convenient wrappers to integrate your normal workflow to accomplish this task into three functions.
 
 ## Installation
 
@@ -37,7 +37,7 @@ devtools::install_github("till-tietz/rrelief")
 
 This quick example will hopefully help to illustrate the general rrelief workflow, show what the package can do 
 and get you started on making some nice maps. 
-For this example we'll be using some census tract data for the state of Washington from (https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html),
+For this example we'll be using some voting district data for the state of Washington from (https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html),
 as well as some elevation data for the north western United States from 
 (http://srtm.csi.cgiar.org/srtmdata/).
 
@@ -45,34 +45,27 @@ as well as some elevation data for the north western United States from
 ```{r example, eval = FALSE}
 library(rrelief)
 
-#loading census_tract shape file as an sf object
-census_tracts <- sf::st_read("cb_2018_53_tract_500k.shp")
-census_tracts <- sf::st_transform(census_tracts, crs = 4326)
+#loading census_tract shape file as an sf object and adding a random variable
+voting_districts <- sf::st_read("cb_2018_53_sldu_500k.shp")
+voting_districts <- sf::st_transform(voting_districts, crs = 4326)
+voting_districts[,"var"] <- runif(nrow(voting_districts), 0,100)
 
-#loading .tif elevation files as raster files and merging them into one raster 
+#loading .tif elevation files and merging them into one raster 
 files <- list.files(recursive=TRUE, pattern=".tif$")
-rasters_list <- sapply(files, raster::raster)
-names(rasters_list) <- NULL
-rasters_list$fun <- mean
-raster <- do.call(raster::mosaic, rasters_list)
-raster::crs(raster) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0" 
-raster <- raster::crop(raster, census_tracts)
-
-#adding some random variables to the census tracts so we have something to map
-census_tracts[,"random_var_cont"] <- sample(seq(from = 0, to = 100, by = 0.01), size = nrow(census_tracts), replace = TRUE)
-census_tracts[,"random_var_cat"] <- sample(c(0,1, NA), size = nrow(census_tracts), replace = TRUE)
+raster <- rrelief::generate.dem(raster.files = files, map.data = voting_districts, aggregate = 3)
 
 #running rrelief keeping the crs projection at 4326
-rrelief_output <- overlay.relief(map.data = census_tracts, variables = c("random_var_cont", "random_var_cat"),
-                                 elevation.raster = raster, make.hillshade = TRUE, 
-                                 coordinate.system = NULL, altitude = 45, azimuth = 270, z.factor = 10)
+rrelief_output <- rrelief::overlay.relief(map.data = voting_districts, variables = c("var"),
+                                          elevation.raster = raster, make.hillshade = TRUE, 
+                                          coordinate.system = NULL, altitude = 45, azimuth = 270,
+                                          z.factor = 10)
 
 ```
 
 overlay.relief returns a data.frame of points with their respective hill-shade and variable values. 
 
 ```{r echo = FALSE, results = "asis"}
-rrelief_output <- readRDS("C:/Users/ttiet/Desktop/rrelief_data/rrelief_test_out.rds")
+rrelief_output <- readRDS("./man/figures/rrelief_output.rds")
 knitr::kable(rrelief_output[c(1:10),])
 ```
 
@@ -81,10 +74,10 @@ Now you can simply create your base map with generate.map.
 ```{r, eval = FALSE}
 
 map <- generate.map(data = rrelief_output, x = "x", y = "y", hillshade = "value",
-                    variable = "random_var_cont", coordinate.system = 4326)
+                    variable = "var", coordinate.system = 4326)
 ```
 
-![](man/figures/test_plot_1.png)
+![](man/figures/map_original.png)
 
 You can further customize your base map with all the ggplot options you know and love. 
 Let's add a slightly more compelling colour scheme and nicer legend. 
@@ -101,7 +94,7 @@ map +
                                 title.vjust = 1))
 ```
 
-![](man/figures/test_plot_2.png)
+![](man/figures/map.png)
 
 
 
