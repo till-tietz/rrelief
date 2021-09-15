@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # rrelief
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/till-tietz/rrelief/workflows/R-CMD-check/badge.svg)](https://github.com/till-tietz/rrelief/actions)
 <!-- badges: end -->
 
 rrelief allows you to conveniently build visually appealing and informative maps with ggplot.

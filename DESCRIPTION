@@ -16,5 +16,7 @@ Imports:
         raster (>= 3.4-5),
         sf (>= 0.9-7),
         purrr (>= 0.3.0),
-        exactextractr (>= 0.5.1)
+        exactextractr (>= 0.5.1),
+        dplyr (>= 1.0.7),
+        ggplot2 (>= 3.3.5)
 RoxygenNote: 7.1.1
