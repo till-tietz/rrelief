@@ -4,7 +4,7 @@
 \alias{generate.map}
 \title{generate basic relief maps}
 \usage{
-generate.map(data, x, y, hillshade, variable)
+generate.map(data, x, y, hillshade, variable, axis_degrees = TRUE)
 }
 \arguments{
 \item{data}{output of overlay.relief}
@@ -16,6 +16,8 @@ generate.map(data, x, y, hillshade, variable)
 \item{hillshade}{name of the hillshade variable in the overlay.relief output as character vector}
 
 \item{variable}{name of the variable in the overlay.relief output you wish to map as character vector}
+
+\item{axis_degrees}{if TRUE axis unit and labels will be in degrees (in accordance with the CRS of your data)}
 }
 \value{
 ggplot object

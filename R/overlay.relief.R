@@ -14,7 +14,7 @@
 #' @param altitude Elevation angle of light source in degrees to calculate hill shade. Numeric value between 0 and 90.
 #' @param azimuth Direction angle of light source in degrees to calculate hill shade. Numeric value between 0 and 360.
 #' @param z.factor Numeric value to multiply elevation raster by to exaggerate relief. Default NULL.
-#' @return A data frame of points and their associated hill shade values and sf attributes.
+#' @return A list containing 1. a data frame of points and their associated hill shade values and sf attributes 2. the EPGS projection code
 #' @export
 
 
@@ -112,7 +112,17 @@ overlay.relief <- function(map.data,
 
   print("compiling data")
   out <- combine_data(data = data, relief_vals = relief_vals)
-  return(out)
+  print("data compiled")
+
+  cs <- trimws(stringr::str_split(sf::st_crs(map.data)[[2]], "\n")[[1]])
+  cs <- cs[grepl("^ID", cs)]
+  cs <- cs[length(cs)]
+  cs <- as.numeric(gsub("[^0-9.-]", "", cs))
+
+  return(list(
+    relief = out,
+    EPSG = cs
+  ))
 }
 
 
