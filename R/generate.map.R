@@ -11,17 +11,20 @@
 #' @param y name of the latitude variable in the overlay.relief output as character vector
 #' @param hillshade name of the hillshade variable in the overlay.relief output as character vector
 #' @param variable name of the variable in the overlay.relief output you wish to map as character vector
-#' @param coordinate.system EPSG code of the projection used in overlay.relief
 #' @return ggplot object
 #' @export
 
 
-generate.map <- function(data, x, y, hillshade, variable, coordinate.system){
+generate.map <- function(data, x, y, hillshade, variable){
+
+  cs <- trimws(stringr::str_split(sf::st_crs(data)[[2]], "\n")[[1]])
+  cs <- as.numeric(gsub("[^0-9.-]", "", cs[grepl("^ID", cs)]))
+
   plot <- ggplot2::ggplot()+
     ggplot2::geom_raster(ggplot2::aes(x = data[,x], y = data[,y],
                                       alpha = data[,hillshade], fill = data[,variable]),
                                       interpolate = TRUE)+
-    ggplot2::coord_sf(crs = coordinate.system)+
+    ggplot2::coord_sf(crs = cs)+
     ggplot2::labs(fill = variable)+
     ggplot2::scale_alpha(name = "", range = c(1, 0.6), guide = F)+
     ggplot2::theme(legend.position = "bottom",

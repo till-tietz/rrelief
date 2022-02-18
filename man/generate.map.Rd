@@ -4,7 +4,7 @@
 \alias{generate.map}
 \title{generate basic relief maps}
 \usage{
-generate.map(data, x, y, hillshade, variable, coordinate.system)
+generate.map(data, x, y, hillshade, variable)
 }
 \arguments{
 \item{data}{output of overlay.relief}
@@ -16,8 +16,6 @@ generate.map(data, x, y, hillshade, variable, coordinate.system)
 \item{hillshade}{name of the hillshade variable in the overlay.relief output as character vector}
 
 \item{variable}{name of the variable in the overlay.relief output you wish to map as character vector}
-
-\item{coordinate.system}{EPSG code of the projection used in overlay.relief}
 }
 \value{
 ggplot object
