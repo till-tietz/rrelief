@@ -5,16 +5,16 @@
 \title{turn elevation raster .tif files into a DEM}
 \usage{
 generate.dem(
-  raster.files,
   map.data,
+  raster.files,
   coordinate.system = NULL,
   aggregate = NULL
 )
 }
 \arguments{
-\item{raster.files}{A vector of file paths to the elevation raster .tif files you wish to turn into a DEM.}
-
 \item{map.data}{An sf data frame with geometries of type POLYGON or MULTIPOLYGON and associated attributes.}
+
+\item{raster.files}{A vector of .tif elevation raster file names you wish to turn into a DEM. If empty the function will pull raster data for the map.data bounding box from AWS Terrain Tiles.}
 
 \item{coordinate.system}{EPSG code of the projection you wish to use. Default NULL: if crs of map.data and the generated DEM do not match the latter will be projected to the crs of the former.}
 

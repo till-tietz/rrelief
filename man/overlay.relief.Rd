@@ -33,7 +33,7 @@ overlay.relief(
 \item{z.factor}{Numeric value to multiply elevation raster by to exaggerate relief. Default NULL.}
 }
 \value{
-A data frame of points and their associated hill shade values and sf attributes.
+A list containing 1. a data frame of points and their associated hill shade values and sf attributes 2. the EPGS projection code
 }
 \description{
 overlay.relief converts DEM data into a data frame of spatial points and their associated
