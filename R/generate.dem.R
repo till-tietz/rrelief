@@ -23,20 +23,20 @@ generate.dem <- function(map.data, raster.files, coordinate.system = NULL, aggre
   }
 
   if (missing(raster.files)) {
-    print("downloading elevation raster")
+    message("downloading elevation raster")
     elevation.raster <- elevatr::get_elev_raster(map.data, z = 9)
-    print("elevation raster loaded")
+    message("elevation raster loaded")
   } else {
-    print("combining elevation raster files")
+    message("combining elevation raster files")
     gdalUtils::gdalbuildvrt(gdalfile = raster.files,
                             output.vrt = "dem.vrt")
-    print("elevation raster files combined")
-    print("loading elevation raster")
+    message("elevation raster files combined")
+    message("loading elevation raster")
     elevation.raster <- gdalUtils::gdal_translate(src_dataset = "dem.vrt",
                                                   dst_dataset = "dem.tif",
                                                   output_Raster = TRUE,
                                                   options = c("BIGTIFF=YES", "COMPRESSION=LZW"))
-    print("elevation raster loaded")
+    message("elevation raster loaded")
   }
 
   if(is.na(raster::crs(elevation.raster))){
@@ -44,25 +44,25 @@ generate.dem <- function(map.data, raster.files, coordinate.system = NULL, aggre
   }
 
   if(!is.null(aggregate)){
-    print("aggregating raster")
+    message("aggregating raster")
     elevation.raster <- raster::aggregate(elevation.raster, aggregate)
-    print("raster aggregated")
+    message("raster aggregated")
   }
 
   if (is.null(coordinate.system)){
     same_crs <- raster::compareCRS(map.data, elevation.raster)
     if(!same_crs){
-      print("re-projecting elevation.raster")
+      message("re-projecting elevation.raster")
       elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
-      print("elevation.raster projected")
+      message("elevation.raster projected")
     }
   } else {
-    print("re-projecting map.data")
+    message("re-projecting map.data")
     map.data <- sf::st_transform(map.data, crs = coordinate.system)
-    print("map.data projected")
-    print("re-projecting elevation.raster")
+    message("map.data projected")
+    message("re-projecting elevation.raster")
     elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
-    print("elevation.raster projected")
+    message("elevation.raster projected")
   }
 
   return(elevation.raster)
