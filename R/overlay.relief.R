@@ -64,36 +64,36 @@ overlay.relief <- function(map.data,
   if (is.null(coordinate.system)){
     same_crs <- raster::compareCRS(map.data, elevation.raster)
     if(!same_crs){
-      print("re-projecting elevation.raster")
+      message("re-projecting elevation.raster")
       elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
-      print("elevation.raster projected")
+      message("elevation.raster projected")
     }
   } else {
-    print("re-projecting map.data")
+    message("re-projecting map.data")
     map.data <- sf::st_transform(map.data, crs = coordinate.system)
-    print("map.data projected")
-    print("re-projecting elevation.raster")
+    message("map.data projected")
+    message("re-projecting elevation.raster")
     elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
-    print("elevation.raster projected")
+    message("elevation.raster projected")
   }
 
   if(make.hillshade){
     if (!is.null(z.factor)) {
       elevation.raster <- (elevation.raster * z.factor)
     }
-    print("generating shaded relief")
+    message("generating shaded relief")
     slope <- raster::terrain(elevation.raster, opt = "slope")
     aspect <- raster::terrain(elevation.raster, opt = "aspect")
     elevation.raster <- raster::hillShade(slope, aspect, angle = altitude, direction = azimuth)
-    print("shaded relief generated")
+    message("shaded relief generated")
   }
 
   data <- map.data
   sf::st_geometry(data) <- NULL
 
-  print("extracting relief data for each polygon")
+  message("extracting relief data for each polygon")
   relief_vals <- exactextractr::exact_extract(elevation.raster, map.data, include_xy = TRUE)
-  print("relief data extracted")
+  message("relief data extracted")
 
   combine_data <- function(data, relief_vals){
     loop <- function(x){
@@ -110,9 +110,9 @@ overlay.relief <- function(map.data,
     return(out)
   }
 
-  print("compiling data")
+  message("compiling data")
   out <- combine_data(data = data, relief_vals = relief_vals)
-  print("data compiled")
+  message("data compiled")
 
   cs <- trimws(stringr::str_split(sf::st_crs(map.data)[[2]], "\n")[[1]])
   cs <- cs[grepl("^ID", cs)]
