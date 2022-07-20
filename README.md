@@ -44,13 +44,13 @@ Generating a map in `rrelief` is split into three successive core
 steps:  
 
 1.generate a DEM  
-2\. generate a relief and overlay your data  
-3\. generate the map  
+2. generate a relief and overlay your data  
+3. generate the map  
 
 We’ll look at each step in turn.  
   
 
-### Generating a DEM  
+### Generating a DEM 
 
   
 
@@ -84,7 +84,7 @@ raster <- rrelief::generate.dem(map.data = voting_districts,
 
   
 
-### Generating a relief and overlaying Data  
+### Generating a relief and overlaying Data 
 
   
 
@@ -99,22 +99,22 @@ rrelief_output <- rrelief::overlay.relief(map.data = voting_districts, variables
 `overlay.relief` returns a `data.frame` of points with their respective
 hill-shade and variable values.
 
-|     value |          x |        y | coverage\_fraction |      var |
-| --------: | ---------: | -------: | -----------------: | -------: |
-| 0.6933837 | \-122.3413 | 47.58625 |          0.0065928 | 60.99251 |
-| 0.7028063 | \-122.3388 | 47.58625 |          0.4054028 | 60.99251 |
-| 0.7341834 | \-122.3363 | 47.58625 |          0.4298274 | 60.99251 |
-| 0.7347732 | \-122.3337 | 47.58625 |          0.4629008 | 60.99251 |
-| 0.7044837 | \-122.3312 | 47.58625 |          0.4805375 | 60.99251 |
-| 0.7518519 | \-122.3287 | 47.58625 |          0.4751625 | 60.99251 |
-| 0.7388729 | \-122.3263 | 47.58625 |          0.4679143 | 60.99251 |
-| 0.7167771 | \-122.3238 | 47.58625 |          0.4451203 | 60.99251 |
-| 0.9926822 | \-122.3213 | 47.58625 |          0.4399785 | 60.99251 |
-| 0.9323923 | \-122.3187 | 47.58625 |          0.1329148 | 60.99251 |
+|     value |         x |        y | coverage\_fraction |      var |
+|----------:|----------:|---------:|-------------------:|---------:|
+| 0.6933837 | -122.3413 | 47.58625 |          0.0065928 | 60.99251 |
+| 0.7028063 | -122.3388 | 47.58625 |          0.4054028 | 60.99251 |
+| 0.7341834 | -122.3363 | 47.58625 |          0.4298274 | 60.99251 |
+| 0.7347732 | -122.3337 | 47.58625 |          0.4629008 | 60.99251 |
+| 0.7044837 | -122.3312 | 47.58625 |          0.4805375 | 60.99251 |
+| 0.7518519 | -122.3287 | 47.58625 |          0.4751625 | 60.99251 |
+| 0.7388729 | -122.3263 | 47.58625 |          0.4679143 | 60.99251 |
+| 0.7167771 | -122.3238 | 47.58625 |          0.4451203 | 60.99251 |
+| 0.9926822 | -122.3213 | 47.58625 |          0.4399785 | 60.99251 |
+| 0.9323923 | -122.3187 | 47.58625 |          0.1329148 | 60.99251 |
 
   
 
-### Generating the Map  
+### Generating the Map 
 
 Now you can simply create your base map with `generate.map`.
 
@@ -125,9 +125,9 @@ map <- generate.map(data = rrelief_output, x = "x", y = "y",
 
 ![](man/figures/map_original.png)
 
-You can further customize your base map with all the ggplot options you
-know and love. Let’s add a slightly more compelling colour scheme and
-nicer legend.
+You can further customize your base map with all the `ggplot` options
+you know and love. Let’s add a slightly more compelling colour scheme
+and nicer legend.
 
 ``` r
 map +
