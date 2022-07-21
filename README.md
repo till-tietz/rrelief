@@ -125,9 +125,9 @@ map <- generate.map(data = rrelief_output, x = "x", y = "y",
 
 ![](man/figures/map_original.png)
 
-You can further customize your base map with all the ggplot options you
-know and love. Let’s add a slightly more compelling colour scheme and
-nicer legend.
+You can further customize your base map with all the `ggplot` options
+you know and love. Let’s add a slightly more compelling colour scheme
+and nicer legend.
 
 ``` r
 map +
