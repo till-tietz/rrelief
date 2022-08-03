@@ -16,28 +16,39 @@
 #' @export
 
 
-generate.map <- function(data, x, y, hillshade, variable, axis_degrees = TRUE){
+generate.map <- function(data,
+                         x,
+                         y,
+                         hillshade,
+                         variable,
+                         axis_degrees = TRUE) {
+    cs <- data[["EPSG"]]
+    data <- data[["relief"]]
 
-  cs <- data[["EPSG"]]
-  data <- data[["relief"]]
+    plot <- ggplot2::ggplot() +
+      ggplot2::geom_raster(ggplot2::aes(
+        x = data[, x],
+        y = data[, y],
+        alpha = data[, hillshade],
+        fill = data[, variable]
+      ),
+      interpolate = TRUE) +
+      ggplot2::labs(fill = variable) +
+      ggplot2::scale_alpha(name = "",
+                           range = c(1, 0.6),
+                           guide = F) +
+      ggplot2::theme(
+        legend.position = "bottom",
+        axis.title = ggplot2::element_blank(),
+        panel.background = ggplot2::element_blank(),
+        panel.border = ggplot2::element_rect(colour = "black", fill = NA),
+        text = ggplot2::element_text(size = 15, family = "serif")
+      )
 
-  plot <- ggplot2::ggplot()+
-    ggplot2::geom_raster(ggplot2::aes(x = data[,x], y = data[,y],
-                                      alpha = data[,hillshade], fill = data[,variable]),
-                                      interpolate = TRUE)+
-    ggplot2::labs(fill = variable)+
-    ggplot2::scale_alpha(name = "", range = c(1, 0.6), guide = F)+
-    ggplot2::theme(legend.position = "bottom",
-                   axis.title = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   panel.border = ggplot2::element_rect(colour = "black", fill = NA),
-                   text = ggplot2::element_text(size = 15, family = "serif"))
+    if (axis_degrees == TRUE) {
+      plot <- plot +
+        ggplot2::coord_sf(crs = cs)
+    }
 
-  if(axis_degrees == TRUE){
-    plot <- plot+
-      ggplot2::coord_sf(crs = cs)
+    return(plot)
   }
-
-  return(plot)
-}
-

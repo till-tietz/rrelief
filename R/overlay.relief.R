@@ -26,7 +26,6 @@ overlay.relief <- function(map.data,
                            altitude = 45,
                            azimuth = 270,
                            z.factor = NULL) {
-
   if (missing(map.data)) {
     stop("missing map.data")
   } else {
@@ -36,13 +35,17 @@ overlay.relief <- function(map.data,
   }
 
   if (missing(variables)) {
-    stop("Missing variables. Please specify the names of the variables in map.data you'd like to visualize")
+    stop(
+      "Missing variables. Please specify the names of the variables in map.data you'd like to visualize"
+    )
   } else {
     if (class(variables) != "character") {
-      stop("Input for Variable is not of class character. Please input variable as character string")
+      stop(
+        "Input for Variable is not of class character. Please input variable as character string"
+      )
     }
 
-    if (!all(variables %in% colnames(map.data))){
+    if (!all(variables %in% colnames(map.data))) {
       in_colnames <- variables %in% colnames(map.data)
       not_in_colnames <- paste(variables[which(!in_colnames)], collapse = " ")
       stop(paste(not_in_colnames), " not in map.data", collapse = " ")
@@ -57,13 +60,13 @@ overlay.relief <- function(map.data,
     }
   }
 
-  if(is.na(raster::crs(elevation.raster))){
+  if (is.na(raster::crs(elevation.raster))) {
     stop("no crs set for elevation.raster")
   }
 
-  if (is.null(coordinate.system)){
+  if (is.null(coordinate.system)) {
     same_crs <- raster::compareCRS(map.data, elevation.raster)
-    if(!same_crs){
+    if (!same_crs) {
       message("re-projecting elevation.raster")
       elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
       message("elevation.raster projected")
@@ -77,7 +80,7 @@ overlay.relief <- function(map.data,
     message("elevation.raster projected")
   }
 
-  if(make.hillshade){
+  if (make.hillshade) {
     if (!is.null(z.factor)) {
       elevation.raster <- (elevation.raster * z.factor)
     }
@@ -95,18 +98,18 @@ overlay.relief <- function(map.data,
   relief_vals <- exactextractr::exact_extract(elevation.raster, map.data, include_xy = TRUE)
   message("relief data extracted")
 
-  combine_data <- function(data, relief_vals){
-    loop <- function(x){
+  combine_data <- function(data, relief_vals) {
+    loop <- function(x) {
       value_i <- relief_vals[[x]]
 
-      data_i <- as.data.frame(data[x,variables])
-      vars_i <- dplyr::slice(data_i,rep(1:dplyr::n(), each = nrow(value_i)))
+      data_i <- as.data.frame(data[x, variables])
+      vars_i <- dplyr::slice(data_i, rep(1:dplyr::n(), each = nrow(value_i)))
       colnames(vars_i) <- variables
 
       value_i <- cbind(value_i, vars_i)
       return(value_i)
     }
-    out <- purrr::map_dfr(1:length(relief_vals), ~loop(.x))
+    out <- purrr::map_dfr(1:length(relief_vals), ~ loop(.x))
     return(out)
   }
 
@@ -114,15 +117,14 @@ overlay.relief <- function(map.data,
   out <- combine_data(data = data, relief_vals = relief_vals)
   message("data compiled")
 
-  cs <- trimws(stringr::str_split(sf::st_crs(map.data)[[2]], "\n")[[1]])
+  cs <-
+    trimws(stringr::str_split(sf::st_crs(map.data)[[2]], "\n")[[1]])
   cs <- cs[grepl("^ID", cs)]
   cs <- cs[length(cs)]
   cs <- as.numeric(gsub("[^0-9.-]", "", cs))
 
-  return(list(
-    relief = out,
-    EPSG = cs
-  ))
+  return(list(relief = out,
+              EPSG = cs))
 }
 
 
