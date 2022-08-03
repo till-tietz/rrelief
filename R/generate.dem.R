@@ -12,58 +12,64 @@
 #' @export
 
 
-generate.dem <- function(map.data, raster.files, coordinate.system = NULL, aggregate = NULL){
+generate.dem <-
+  function(map.data,
+           raster.files,
+           coordinate.system = NULL,
+           aggregate = NULL) {
 
-  if (missing(map.data)) {
-    stop("missing map.data")
-  } else {
     if (class(map.data)[[1]] != "sf") {
-      stop("map.data not of class sf")
+        stop("map.data not of class sf")
+      }
+
+
+    if (missing(raster.files)) {
+      message("downloading elevation raster")
+      elevation.raster <- elevatr::get_elev_raster(map.data, z = 9)
+      message("elevation raster loaded")
+    } else {
+      message("combining elevation raster files")
+      gdalUtils::gdalbuildvrt(gdalfile = raster.files,
+                              output.vrt = "dem.vrt")
+      message("elevation raster files combined")
+      message("loading elevation raster")
+      elevation.raster <-
+        gdalUtils::gdal_translate(
+          src_dataset = "dem.vrt",
+          dst_dataset = "dem.tif",
+          output_Raster = TRUE,
+          options = c("BIGTIFF=YES", "COMPRESSION=LZW")
+        )
+      message("elevation raster loaded")
     }
-  }
 
-  if (missing(raster.files)) {
-    message("downloading elevation raster")
-    elevation.raster <- elevatr::get_elev_raster(map.data, z = 9)
-    message("elevation raster loaded")
-  } else {
-    message("combining elevation raster files")
-    gdalUtils::gdalbuildvrt(gdalfile = raster.files,
-                            output.vrt = "dem.vrt")
-    message("elevation raster files combined")
-    message("loading elevation raster")
-    elevation.raster <- gdalUtils::gdal_translate(src_dataset = "dem.vrt",
-                                                  dst_dataset = "dem.tif",
-                                                  output_Raster = TRUE,
-                                                  options = c("BIGTIFF=YES", "COMPRESSION=LZW"))
-    message("elevation raster loaded")
-  }
+    if (is.na(raster::crs(elevation.raster))) {
+      raster::crs(elevation.raster) <-
+        "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    }
 
-  if(is.na(raster::crs(elevation.raster))){
-    raster::crs(elevation.raster) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-  }
+    if (!is.null(aggregate)) {
+      message("aggregating raster")
+      elevation.raster <-
+        raster::aggregate(elevation.raster, aggregate)
+      message("raster aggregated")
+    }
 
-  if(!is.null(aggregate)){
-    message("aggregating raster")
-    elevation.raster <- raster::aggregate(elevation.raster, aggregate)
-    message("raster aggregated")
-  }
-
-  if (is.null(coordinate.system)){
-    same_crs <- raster::compareCRS(map.data, elevation.raster)
-    if(!same_crs){
+    if (is.null(coordinate.system)) {
+      same_crs <- raster::compareCRS(map.data, elevation.raster)
+      if (!same_crs) {
+        message("re-projecting elevation.raster")
+        elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
+        message("elevation.raster projected")
+      }
+    } else {
+      message("re-projecting map.data")
+      map.data <- sf::st_transform(map.data, crs = coordinate.system)
+      message("map.data projected")
       message("re-projecting elevation.raster")
       elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
       message("elevation.raster projected")
     }
-  } else {
-    message("re-projecting map.data")
-    map.data <- sf::st_transform(map.data, crs = coordinate.system)
-    message("map.data projected")
-    message("re-projecting elevation.raster")
-    elevation.raster <- raster::projectRaster(elevation.raster, crs = raster::crs(map.data))
-    message("elevation.raster projected")
-  }
 
-  return(elevation.raster)
-}
+    return(elevation.raster)
+  }
