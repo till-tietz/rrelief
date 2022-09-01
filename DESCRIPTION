@@ -12,7 +12,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-        magrittr (>= 2.0.2),
         raster (>= 3.4-5),
         sf (>= 0.9-7),
         purrr (>= 0.3.0),
@@ -20,5 +19,6 @@ Imports:
         dplyr (>= 1.0.7),
         ggplot2 (>= 3.3.5),
         elevatr (>= 0.4.2),
-        stringr (>= 1.4.0)
-RoxygenNote: 7.1.2
+        stringr (>= 1.4.0),
+        methods (>= 3.6.2)
+RoxygenNote: 7.2.1

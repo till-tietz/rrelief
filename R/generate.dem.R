@@ -18,7 +18,7 @@ generate.dem <-
            coordinate.system = NULL,
            aggregate = NULL) {
 
-    if (class(map.data)[[1]] != "sf") {
+    if (!methods::is(map.data,"sf")) {
         stop("map.data not of class sf")
       }
 

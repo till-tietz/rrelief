@@ -29,7 +29,7 @@ overlay.relief <- function(map.data,
   if (missing(map.data)) {
     stop("missing map.data")
   } else {
-    if (class(map.data)[[1]] != "sf") {
+    if (!methods::is(map.data,"sf")) {
       stop("map.data not of class sf")
     }
   }
@@ -39,7 +39,7 @@ overlay.relief <- function(map.data,
       "Missing variables. Please specify the names of the variables in map.data you'd like to visualize"
     )
   } else {
-    if (class(variables) != "character") {
+    if (!methods::is(variables,"character")) {
       stop(
         "Input for Variable is not of class character. Please input variable as character string"
       )
