@@ -31,8 +31,11 @@ generate.dem <-
       message("loading elevation raster files")
       elevation.raster <- lapply(raster.files,
                                  function(i){raster::raster(i)})
-      message("combining elevation raster files")
-      elevation.raster <- do.call(raster::merge, elevation.raster)
+
+      if(length(elevation.raster) > 1){
+        message("combining elevation raster files")
+        elevation.raster <- do.call(raster::merge, elevation.raster)
+      }
     }
 
     if (is.na(raster::crs(elevation.raster))) {
