@@ -35,7 +35,10 @@ generate.dem <-
       if(length(elevation.raster) > 1){
         message("combining elevation raster files")
         elevation.raster <- do.call(raster::merge, elevation.raster)
+      } else {
+        elevation.raster <- elevation.raster[[1]]
       }
+
     }
 
     if (is.na(raster::crs(elevation.raster))) {
