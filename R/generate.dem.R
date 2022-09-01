@@ -28,19 +28,11 @@ generate.dem <-
       elevation.raster <- elevatr::get_elev_raster(map.data, z = 9)
       message("elevation raster loaded")
     } else {
+      message("loading elevation raster files")
+      elevation.raster <- lapply(raster.files,
+                                 function(i){raster::raster(i)})
       message("combining elevation raster files")
-      gdalUtils::gdalbuildvrt(gdalfile = raster.files,
-                              output.vrt = "dem.vrt")
-      message("elevation raster files combined")
-      message("loading elevation raster")
-      elevation.raster <-
-        gdalUtils::gdal_translate(
-          src_dataset = "dem.vrt",
-          dst_dataset = "dem.tif",
-          output_Raster = TRUE,
-          options = c("BIGTIFF=YES", "COMPRESSION=LZW")
-        )
-      message("elevation raster loaded")
+      elevation.raster <- do.call(raster::merge, elevation.raster)
     }
 
     if (is.na(raster::crs(elevation.raster))) {
